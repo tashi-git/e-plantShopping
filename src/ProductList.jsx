@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addItem } from './CartSlice';
 import './ProductList.css';
 import CartItem from './CartItem';
 
 function ProductList({ onHomeClick }) {
     const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.items);
+
+    const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+
     const [showCart, setShowCart] = useState(false);
     const [showPlants, setShowPlants] = useState(false);
-    const [addedToCart, setAddedToCart] = useState({});
 
     const plantsArray = [
         {
@@ -57,13 +60,13 @@ function ProductList({ onHomeClick }) {
             plants: [
                 {
                     name: "Lavender",
-                    image: "https://images.unsplash.com/photo-1611909023032-2d6b3134ecba?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    image: "https://images.unsplash.com/photo-1611909023032-2d6b3134ecba?q=80&w=1074&auto=format&fit=crop",
                     description: "Calming scent, used in aromatherapy.",
                     cost: "$20"
                 },
                 {
                     name: "Jasmine",
-                    image: "https://images.unsplash.com/photo-1592729645009-b96d1e63d14b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    image: "https://images.unsplash.com/photo-1592729645009-b96d1e63d14b?q=80&w=1170&auto=format&fit=crop",
                     description: "Sweet fragrance, promotes relaxation.",
                     cost: "$18"
                 },
@@ -88,7 +91,7 @@ function ProductList({ onHomeClick }) {
                 {
                     name: "Hyacinth",
                     image: "https://cdn.pixabay.com/photo/2019/04/07/20/20/hyacinth-4110726_1280.jpg",
-                    description: "Hyacinth is a beautiful flowering plant known for its fragrant.",
+                    description: "Hyacinth is a beautiful flowering plant known for its fragrance.",
                     cost: "$22"
                 }
             ]
@@ -97,11 +100,11 @@ function ProductList({ onHomeClick }) {
 
     const styleObj = {
         backgroundColor: '#4CAF50',
-        color: '#fff!important',
+        color: '#fff',
         padding: '15px',
         display: 'flex',
         justifyContent: 'space-between',
-        alignIems: 'center',
+        alignItems: 'center',
         fontSize: '20px',
     };
 
@@ -141,10 +144,6 @@ function ProductList({ onHomeClick }) {
 
     const handleAddToCart = (plant) => {
         dispatch(addItem(plant));
-        setAddedToCart((prevState) => ({
-            ...prevState,
-            [plant.name]: true,
-        }));
     };
 
     return (
@@ -152,7 +151,10 @@ function ProductList({ onHomeClick }) {
             <div className="navbar" style={styleObj}>
                 <div className="tag">
                     <div className="luxury">
-                        <img src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" alt="" />
+                        <img
+                            src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png"
+                            alt=""
+                        />
                         <a href="/" onClick={(e) => handleHomeClick(e)}>
                             <div>
                                 <h3 style={{ color: 'white' }}>Paradise Nursery</h3>
@@ -170,7 +172,7 @@ function ProductList({ onHomeClick }) {
                     </div>
                     <div>
                         <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}>
-                            <h1 className='cart'>🛒</h1>
+                            <h1 className='cart'>🛒 {totalQuantity}</h1>
                         </a>
                     </div>
                 </div>
@@ -198,9 +200,9 @@ function ProductList({ onHomeClick }) {
 
                                         <button
                                             onClick={() => handleAddToCart(plant)}
-                                            disabled={addedToCart[plant.name]}
+                                            disabled={cartItems.some((item) => item.name === plant.name)}
                                         >
-                                            {addedToCart[plant.name]
+                                            {cartItems.some((item) => item.name === plant.name)
                                                 ? "Added to Cart"
                                                 : "Add to Cart"}
                                         </button>

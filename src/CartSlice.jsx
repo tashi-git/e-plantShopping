@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const CartSlice = createSlice({
   name: 'cart',
   initialState: {
-    items: [],
+    items: [], // Initialize items as an empty array
   },
   reducers: {
     addItem: (state, action) => {
@@ -25,11 +25,12 @@ export const CartSlice = createSlice({
     },
 
     updateQuantity: (state, action) => {
-      const { name, quantity } = action.payload;
+      const { name, amount } = action.payload;
+
       const item = state.items.find((item) => item.name === name);
 
       if (item) {
-        item.quantity = quantity;
+        item.quantity = amount;
       }
     },
   },
